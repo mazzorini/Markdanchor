@@ -2,9 +2,7 @@
 
 Just Upload the files and have fun =)
 
-![Preview](preview.png)
-
-##License
+###License
 Font Awesome: [http://fortawesome.github.io/Font-Awesome/license/](http://fortawesome.github.io/Font-Awesome/license/)  
 Bootstrap: [https://github.com/twbs/bootstrap/blob/master/LICENSE](https://github.com/twbs/bootstrap/blob/master/LICENSE)
 
@@ -30,3 +28,6 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
+
+###Preview
+![Preview](preview.png)
