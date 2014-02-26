@@ -5,10 +5,8 @@
 <script>
         function setFocus() {
             var editor = $('textarea');
-            var value = editor.val();
-            editor.val("");
             editor.focus();
-            editor.val(value);
+            
         }
 </script>
 
