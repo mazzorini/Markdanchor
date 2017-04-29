@@ -4,404 +4,393 @@
 
 */
 
-;(function($) {
+;(($ => {
 
-                $.fn.editor = function() {
+                $.fn.editor = function(...args) {
+                                var options = args[1] || {};
 
- 
+                                var defaults = {};
 
-                               var options = arguments[1] || {};
 
-                               var defaults = {};
 
- 
+                                var settings = $.extend({}, defaults, options);
 
-                               var settings = $.extend({}, defaults, options);
+                                var textarea = $(this);
+                                var container = textarea.parent();
 
-                               var textarea = $(this), container = textarea.parent();
 
- 
 
-                               var insert = function(str) {
+                                var insert = str => {
 
-                                               var element = textarea[0];
+                                                var element = textarea[0];
 
-                                               var start = element.selectionStart;
+                                                var start = element.selectionStart;
 
-                                               var value = element.value;
+                                                var value = element.value;
 
- 
+  
 
-                                               element.value = value.substring(0, start) + str + value.substring(start);
+                                                element.value = value.substring(0, start) + str + value.substring(start);
 
- 
+  
 
-                                               element.selectionStart = element.selectionEnd = start + str.length;
+                                                element.selectionStart = element.selectionEnd = start + str.length;
 
-                               };
+                                };
 
- 
 
-                               var wrap = function(left, right) {
 
-                                               var element = textarea[0];
+                                var wrap = (left, right) => {
+                                                var element = textarea[0];
 
-                                               var start = element.selectionStart, end = element.selectionEnd;
+                                                var start = element.selectionStart;
+                                                var end = element.selectionEnd;
 
-                                               var value = element.value;
+                                                var value = element.value;
 
- 
 
-                                               element.value = value.substring(0, start) + left + value.substring(start, end) + right + value.substring(end);
 
- 
+                                                element.value = value.substring(0, start) + left + value.substring(start, end) + right + value.substring(end);
 
-                                               element.selectionStart = end + left.length + right.length;
 
-                               };
 
- 
+                                                element.selectionStart = end + left.length + right.length;
+                                };
 
-                               var tab = function(event) {
 
-                                               var element = textarea[0];
 
-                                               var start = element.selectionStart, end = element.selectionEnd;
+                                var tab = event => {
+                                                var element = textarea[0];
 
-                                               var value = element.value;
+                                                var start = element.selectionStart;
+                                                var end = element.selectionEnd;
 
- 
+                                                var value = element.value;
 
-                                               var selections = value.substring(start, end).split("\n");
 
- 
 
-                                               for(var i = 0; i < selections.length; i++) {
+                                                var selections = value.substring(start, end).split("\n");
 
-                                                               selections[i] = "\t" + selections[i];
 
-                                               }
 
- 
+                                                for(var i = 0; i < selections.length; i++) {
 
-                                               element.value = value.substring(0, start) + selections.join("\n") + value.substring(end);
+                                                                selections[i] = "\t" + selections[i];
 
- 
+                                                }
 
-                                               if(end > start) {
 
-                                                               element.selectionStart = start;
 
-                                                               element.selectionEnd = end + selections.length;
+                                                element.value = value.substring(0, start) + selections.join("\n") + value.substring(end);
 
-                                               }
 
-                                               else element.selectionStart = element.selectionEnd = start + 1;
 
-                               };
+                                                if(end > start) {
 
- 
+                                                                element.selectionStart = start;
 
-                               var untab = function(event) {
+                                                                element.selectionEnd = end + selections.length;
 
-                                               var element = textarea[0];
+                                                }
 
- 
+                                                else element.selectionStart = element.selectionEnd = start + 1;
+                                };
 
-                                               var start = element.selectionStart, end = element.selectionEnd;
 
-                                               var value = element.value;
 
-                                               var pattern = new RegExp(/^[\t]{1}/);
+                                var untab = event => {
+                                                var element = textarea[0];
 
-                                               var edits = 0;
 
- 
 
-                                               // single line
+                                                var start = element.selectionStart;
+                                                var end = element.selectionEnd;
 
-                                               if(start == end) {
+                                                var value = element.value;
 
-                                                               // move to the start of the line
+                                                var pattern = new RegExp(/^[\t]{1}/);
 
-                                                               while(start > 0) {
+                                                var edits = 0;
 
-                                                                              if(value.charAt(start) == "\n") {
 
-                                                                                              start++;
 
-                                                                                              break;
+                                                // single line
 
-                                                                              }
+                                                if(start == end) {
 
- 
+                                                                // move to the start of the line
 
-                                                                              start--;
+                                                                while(start > 0) {
 
-                                                               }
+                                                                               if(value.charAt(start) == "\n") {
 
- 
+                                                                                               start++;
 
-                                                               var portion = value.substring(start, end);
+                                                                                               break;
 
-                                                               var matches = portion.match(pattern);
+                                                                               }
 
- 
+  
 
-                                                               if(matches) {
+                                                                               start--;
 
-                                                                              element.value = value.substring(0, start) + portion.replace(pattern, '') + value.substring(end);
+                                                                }
 
-                                                                              end--;
+  
 
-                                                               }
+                                                                var portion = value.substring(start, end);
 
- 
+                                                                var matches = portion.match(pattern);
 
-                                                               element.selectionStart = element.selectionEnd = end;
+  
 
-                                               }
+                                                                if(matches) {
 
-                                               // multiline
+                                                                               element.value = value.substring(0, start) + portion.replace(pattern, '') + value.substring(end);
 
-                                               else {
+                                                                               end--;
 
-                                                               var selections = value.substring(start, end).split("\n");
+                                                                }
 
- 
+  
 
-                                                               for(var i = 0; i < selections.length; i++) {
+                                                                element.selectionStart = element.selectionEnd = end;
 
-                                                                              if(selections[i].match(pattern)) {
+                                                }
 
-                                                                                              edits++;
+                                                // multiline
 
-                                                                                              selections[i] = selections[i].replace(pattern, '');
+                                                else {
 
-                                                                              }
+                                                                var selections = value.substring(start, end).split("\n");
 
-                                                               }
+  
 
- 
+                                                                for(var i = 0; i < selections.length; i++) {
 
-                                                               element.value = value.substring(0, start) + selections.join("\n") + value.substring(end);
+                                                                               if(selections[i].match(pattern)) {
 
- 
+                                                                                               edits++;
 
-                                                               element.selectionStart = start;
+                                                                                               selections[i] = selections[i].replace(pattern, '');
 
-                                                               element.selectionEnd = end - edits;
+                                                                               }
 
-                                               }
+                                                                }
 
-                               };
+  
 
- 
+                                                                element.value = value.substring(0, start) + selections.join("\n") + value.substring(end);
 
-                               var controls = {
+  
 
-                                               bold: function() {
+                                                                element.selectionStart = start;
 
-                                                               wrap('**', '**');
+                                                                element.selectionEnd = end - edits;
 
-                                               },
+                                                }
+                                };
 
-                                               italic: function() {
 
-                                                               wrap('*', '*');
 
-                                               },
+                                var controls = {
 
-            strike: function() {
+                                                bold() {
 
-                                                               wrap('~~', '~~');
+                                                                wrap('**', '**');
 
-                                               },
+                                                },
 
-                                               code: function() {
+                                                italic() {
 
-                                                               wrap('`', '`');
+                                                                wrap('*', '*');
 
-                                               },
+                                                },
 
-                                               link: function() {
+             strike() {
 
-                                                               var element = textarea[0];
+                                                                wrap('~~', '~~');
 
-                                                               var start = element.selectionStart, end = element.selectionEnd;
+                                                },
 
-                                                               var value = element.value;
+                                                code() {
 
- 
+                                                                wrap('`', '`');
 
-                                                               var selection = value.substring(start, end);
+                                                },
 
-                                                               var link = '[' + selection + '](' + selection + ')';
+                                                link() {
+                                                                var element = textarea[0];
 
- 
+                                                                var start = element.selectionStart;
+                                                                var end = element.selectionEnd;
 
-                                                               element.value = value.substring(0, start) + link + value.substring(end);
+                                                                var value = element.value;
 
-                                                               element.selectionStart = element.selectionEnd = end + link.length;
 
-                                               },
 
-            img: function() {
+                                                                var selection = value.substring(start, end);
 
-                                                               var element = textarea[0];
+                                                                var link = '[' + selection + '](' + selection + ')';
 
-                                                               var start = element.selectionStart, end = element.selectionEnd;
 
-                                                               var value = element.value;
 
- 
+                                                                element.value = value.substring(0, start) + link + value.substring(end);
 
-                                                               var selection = value.substring(start, end);
+                                                                element.selectionStart = element.selectionEnd = end + link.length;
+                                                },
 
-                                                               var link = '![' + selection + '](' + selection + ')';
+             img() {
+                             var element = textarea[0];
 
- 
+                             var start = element.selectionStart;
+                             var end = element.selectionEnd;
 
-                                                               element.value = value.substring(0, start) + link + value.substring(end);
+                             var value = element.value;
 
-                                                               element.selectionStart = element.selectionEnd = end + link.length;
 
-                                               },
 
-                                               list: function() {
+                             var selection = value.substring(start, end);
 
-                                                               var element = textarea[0];
+                             var link = '![' + selection + '](' + selection + ')';
 
-                                                               var start = element.selectionStart, end = element.selectionEnd;
 
-                                                               var value = element.value;
 
- 
+                             element.value = value.substring(0, start) + link + value.substring(end);
 
-                                                               var selections = value.substring(start, end).split("\n");
+                             element.selectionStart = element.selectionEnd = end + link.length;
+             },
 
- 
+                                                list() {
+                                                                var element = textarea[0];
 
-                                                              for(var i = 0; i < selections.length; i++) {
+                                                                var start = element.selectionStart;
+                                                                var end = element.selectionEnd;
 
-                                                                              selections[i] = '* ' + selections[i];
+                                                                var value = element.value;
 
-                                                               }
 
- 
 
-                                                               element.value = value.substring(0, start) + "\n" + selections.join("\n") + "\n" + value.substring(end);
+                                                                var selections = value.substring(start, end).split("\n");
 
-                                               },
 
-                                               quote: function() {
 
-                                                               var element = textarea[0];
+                                                                for(var i = 0; i < selections.length; i++) {
 
-                                                               var start = element.selectionStart, end = element.selectionEnd;
+                                                                                selections[i] = '* ' + selections[i];
 
-                                                               var value = element.value;
+                                                                 }
 
- 
 
-                                                               var selections = value.substring(start, end).split("\n");
 
- 
+                                                                element.value = value.substring(0, start) + "\n" + selections.join("\n") + "\n" + value.substring(end);
+                                                },
 
-                                                               for(var i = 0; i < selections.length; i++) {
+                                                quote() {
+                                                                var element = textarea[0];
 
-                                                                              selections[i] = '> ' + selections[i];
+                                                                var start = element.selectionStart;
+                                                                var end = element.selectionEnd;
 
-                                                               }
+                                                                var value = element.value;
 
- 
 
-                                                               element.value = value.substring(0, start) + selections.join("\n") + value.substring(end);
 
-                                               },
+                                                                var selections = value.substring(start, end).split("\n");
 
-            h1: function() {
 
-               wrap('#', '');                                                      
 
-                                               },
+                                                                for(var i = 0; i < selections.length; i++) {
 
-            h2: function() {
+                                                                               selections[i] = '> ' + selections[i];
 
-               wrap('##', '');                                                   
+                                                                }
 
-                                               },
 
-            h3: function() {
 
-               wrap('###', '');                                                 
+                                                                element.value = value.substring(0, start) + selections.join("\n") + value.substring(end);
+                                                },
 
-                                               },
+             h1() {
 
-            h4: function() {
+                wrap('#', '');                                                      
 
-               wrap('####', '');                                                              
+                                                },
 
-                                               },
+             h2() {
 
-            h5: function() {
+                wrap('##', '');                                                   
 
-               wrap('#####', '');                                                           
+                                                },
 
-                                               },
+             h3() {
 
-            h6: function() {
+                wrap('###', '');                                                 
 
-               wrap('######', '');                                                        
+                                                },
 
-                                               }
+             h4() {
 
-                               };
+                wrap('####', '');                                                              
 
- 
+                                                },
 
-                               textarea.on('keydown', function(event) {
+             h5() {
 
-                                               if(event.keyCode === 9) {
+                wrap('#####', '');                                                           
 
-                                                               event.preventDefault();
+                                                },
 
-                                                               event.stopPropagation();
+             h6() {
 
- 
+                wrap('######', '');                                                        
 
-                                                               if(event.shiftKey && event.keyCode === 9) {
+                                                }
 
-                                                                              untab(event);
+                                };
 
-                                                               }
 
-                                                               else {
 
-                                                                              tab(event);
+                                textarea.on('keydown', event => {
 
-                                                               }
+                                                if(event.keyCode === 9) {
 
-                                               }
+                                                                event.preventDefault();
 
-                               });
+                                                                event.stopPropagation();
 
- 
+  
 
-                               container.on('click', 'nav a', function(event) {
+                                                                if(event.shiftKey && event.keyCode === 9) {
 
-                                               var a = $(event.target), method = a.attr('href').split('#').pop();
+                                                                               untab(event);
 
- 
+                                                                }
 
-                                               if(controls[method]) controls[method]();
+                                                                else {
 
- 
+                                                                               tab(event);
 
-                                               return false;
+                                                                }
+
+                                                }
 
                                 });
 
+
+
+                                container.on('click', 'nav a', event => {
+                                                var a = $(event.target);
+                                                var method = a.attr('href').split('#').pop();
+
+
+
+                                                if(controls[method]) controls[method]();
+
+
+
+                                                return false;
+                                });
                 };
 
-}(Zepto));
+})(Zepto));
